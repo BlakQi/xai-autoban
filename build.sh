@@ -4,7 +4,8 @@ set -euo pipefail
 mkdir -p dist
 go test ./...
 CGO_ENABLED=1 go build \
-  -buildmode=c-shared \
+	-buildvcs=false \
+	-buildmode=c-shared \
   -trimpath \
   -ldflags="-s -w" \
   -o dist/xai-autoban.so \
