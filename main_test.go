@@ -40,7 +40,17 @@ func TestPublicStatusPageHasNoManagementAuthentication(t *testing.T) {
 			t.Fatalf("page still contains authenticated management flow: %q", forbidden)
 		}
 	}
-	for _, required := range []string{"/v0/resource/plugins/xai-autoban", "unbanSelected", "unbanStatus", "autoRefresh"} {
+	for _, required := range []string{
+		"/v0/resource/plugins/xai-autoban",
+		"unbanSelected",
+		"unbanStatus",
+		"autoRefresh",
+		`data-status="401"`,
+		"unbanStatus(401)",
+		`id="customStatus"`,
+		"filterCustomStatus",
+		"unbanCustomStatus",
+	} {
 		if !strings.Contains(page, required) {
 			t.Fatalf("page is missing %q", required)
 		}
@@ -50,15 +60,21 @@ func TestPublicStatusPageHasNoManagementAuthentication(t *testing.T) {
 func TestPublicUnbanByStatus(t *testing.T) {
 	bans.clearAll()
 	now := time.Now()
+	bans.set("unauthorized", banEntry{StatusCode: 401, ResetAt: now.Add(time.Hour)})
 	bans.set("payment", banEntry{StatusCode: 402, ResetAt: now.Add(time.Hour)})
 	bans.set("forbidden", banEntry{StatusCode: 403, ResetAt: now.Add(time.Hour)})
-	response := publicAction(pluginapi.ManagementRequest{Query: url.Values{"op": {"unban-status"}, "status": {"402"}}})
+	response := publicAction(pluginapi.ManagementRequest{Query: url.Values{"op": {"unban-status"}, "status": {"401"}}})
 	if response.StatusCode != http.StatusOK {
 		t.Fatalf("unexpected status: %d", response.StatusCode)
 	}
 	status := currentStatus()
-	if status.Count != 1 || status.Bans[0].StatusCode != 403 {
+	if status.Count != 2 {
 		t.Fatalf("unexpected bans after action: %#v", status)
+	}
+	for _, ban := range status.Bans {
+		if ban.StatusCode == 401 {
+			t.Fatalf("401 ban was not removed: %#v", status)
+		}
 	}
 }
 

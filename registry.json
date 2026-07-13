@@ -6,9 +6,9 @@
       "name": "xAI Autoban",
       "description": "Automatically isolate xAI credentials after 401, 402, 403, or 429 responses and provide an operational recovery dashboard.",
       "author": "akihitohyh",
-      "version": "0.2.0",
-      "repository": "https://github.com/akihitohyh/xai-autoban",
-      "homepage": "https://github.com/akihitohyh/xai-autoban",
+      "version": "0.2.1",
+      "repository": "https://github.com/BlakQi/xai-autoban",
+      "homepage": "https://github.com/BlakQi/xai-autoban",
       "license": "MIT",
       "tags": [
         "xai",
