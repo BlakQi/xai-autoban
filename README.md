@@ -101,3 +101,6 @@ POST /v0/management/plugins/xai-autoban/import
 ## License
 
 [MIT](LICENSE)
+
+## 致谢
+https://linux.do
